@@ -1,0 +1,21 @@
+spring:
+    application:
+        name: BinarFood
+    datasource:
+        url: ${DB_URL}
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+server:
+    port: 8080
+security:
+    jwt:
+        secret-key: ${JWT_SECRET_KEY}
+        expired-minutes: ${JWT_EXPIRED_MINUTES}
