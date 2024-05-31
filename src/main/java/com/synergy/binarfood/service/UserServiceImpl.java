@@ -32,10 +32,21 @@ public class UserServiceImpl implements UserService {
                     .email(defaultOidcUser.getAttribute("email"))
                     .password(this.tokenEncoder.encode(defaultOidcUser.getIdToken().toString()))
                     .roles(List.of(customerRole))
+                    .isVerified(true)
                     .build();
             this.userRepository.save(user);
         }
 
         return user;
+    }
+
+    public boolean isUserVerifiedByEmail(String email) {
+        User user = this.userRepository.findByEmail(email)
+                .orElse(null);
+        if (user == null) {
+            return false;
+        }
+
+        return user.isVerified();
     }
 }

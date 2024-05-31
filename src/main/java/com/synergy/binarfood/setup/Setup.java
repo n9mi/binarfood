@@ -77,6 +77,7 @@ public class Setup {
                     .email(String.format("merchant%d@example.com", i))
                     .password(passwordEncoder.encode("password"))
                     .roles(merchantRoleList)
+                    .isVerified(true)
                     .build();
             usersMerchants.add(newUser);
         }
@@ -87,9 +88,17 @@ public class Setup {
                     .email(String.format("customer%d@example.com", i))
                     .password(passwordEncoder.encode("password"))
                     .roles(customerRoleList)
+                    .isVerified(true)
                     .build();
             usersCustomers.add(newUser);
         }
+        usersCustomers.add(User.builder()
+                .name("naomi")
+                .email("naomigoreng7@gmail.com")
+                .password(passwordEncoder.encode("password"))
+                .roles(customerRoleList)
+                .isVerified(true)
+                .build());
 
         userRepository.saveAllAndFlush(usersMerchants);
         userRepository.saveAllAndFlush(usersCustomers);

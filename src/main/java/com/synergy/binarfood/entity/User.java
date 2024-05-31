@@ -31,6 +31,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private boolean isVerified;
+
     @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -38,4 +41,13 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
     private List<Role> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL })
+    private List<Merchant> merchants;
+
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL })
+    private List<Order> orders;
+
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL })
+    private List<UserRegistrationOtp> userRegistrationOtps;
 }

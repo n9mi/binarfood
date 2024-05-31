@@ -81,7 +81,8 @@ public class SecurityConfig {
                                         ERole.MERCHANT.name(),
                                         ERole.CUSTOMER.name())
                                 .requestMatchers("/login").permitAll()
-                                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll())
+                                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                                .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults())

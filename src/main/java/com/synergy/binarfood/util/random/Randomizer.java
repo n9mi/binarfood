@@ -1,5 +1,7 @@
 package com.synergy.binarfood.util.random;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.util.Random;
 
 public class Randomizer {
@@ -13,5 +15,9 @@ public class Randomizer {
 
         return random.nextInt(max / thousand - (min + 4) / thousand + 1) *
                 thousand + (min + 4) / thousand * thousand;
+    }
+
+    public static String generateOtp(int length) {
+        return RandomStringUtils.randomAlphanumeric(length);
     }
 }
