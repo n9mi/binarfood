@@ -16,9 +16,11 @@ public interface MerchantRepository extends JpaRepository<Merchant, UUID> {
     @Query(value = "select * from merchants m where m.open is true", nativeQuery = true)
     Page<Merchant> findOpenedMerchants(Pageable pageable);
 
-    boolean existsByIdAndOpen(UUID id, boolean open);
+    Page<Merchant> findAllByUser_Email(String email, Pageable pageable);
 
-    Page<Merchant> findAllByUser(User user, Pageable pageable);
+    boolean existsByIdAndUser_Email(UUID id, String email);
+
+    boolean existsByIdAndOpen(UUID id, boolean open);
 
     @Modifying
     @Query(value = "delete from merchants", nativeQuery = true)

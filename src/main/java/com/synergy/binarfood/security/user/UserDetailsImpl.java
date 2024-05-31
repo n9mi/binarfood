@@ -1,6 +1,7 @@
 package com.synergy.binarfood.security.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.synergy.binarfood.entity.Role;
 import com.synergy.binarfood.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +10,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;

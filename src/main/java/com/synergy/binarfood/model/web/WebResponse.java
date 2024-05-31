@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WebResponse<T> {
     private T data;
-    private String errors;
 }

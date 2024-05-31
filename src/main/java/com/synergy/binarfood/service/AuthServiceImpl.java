@@ -1,5 +1,6 @@
 package com.synergy.binarfood.service;
 
+import com.synergy.binarfood.entity.ERole;
 import com.synergy.binarfood.entity.Role;
 import com.synergy.binarfood.entity.User;
 import com.synergy.binarfood.model.auth.LoginRequest;
@@ -9,16 +10,17 @@ import com.synergy.binarfood.repository.RoleRepository;
 import com.synergy.binarfood.repository.UserRepository;
 import com.synergy.binarfood.security.service.JWTService;
 import com.synergy.binarfood.security.user.UserDetailsImpl;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final ValidationService validationService;
     private final AuthenticationManager authenticationManager;
 
+    @Transactional
     public void register(RegisterRequest request) {
         this.validationService.validate(request);
 
@@ -38,18 +41,23 @@ public class AuthServiceImpl implements AuthService {
                     String.format("user with email %s already exists", request.getEmail()));
         }
 
-        Role foundRole = this.roleRepository.findByName(request.getAsRole().name())
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "role doesn't exists"));
+        if (!EnumUtils.isValidEnum(ERole.class, request.getAsRole())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "role didn't match any records");
+        }
+        Role role = this.roleRepository.findByName(ERole.valueOf(request.getAsRole()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "role didn't match any records"));
+
         User user = User
                 .builder()
+                .name(request.getName())
                 .email(request.getEmail())
+                .roles(List.of(role))
                 .password(this.passwordEncoder.encode(request.getPassword()))
-                .roles(Collections.singleton(foundRole))
                 .build();
         this.userRepository.save(user);
     }
 
+    @Transactional
     public TokenResponse login(LoginRequest request) {
         this.validationService.validate(request);
 

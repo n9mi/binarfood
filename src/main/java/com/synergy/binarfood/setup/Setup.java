@@ -48,19 +48,19 @@ public class Setup {
             Seed roles
 
         */
-        Set<Role> merchantRoleSet = new HashSet<>();
+        List<Role> merchantRoleList = new ArrayList<>();
         Role newMerchantRole = Role.builder()
                 .name(ERole.MERCHANT)
                 .build();
 
-        Set<Role> customerRoleSet = new HashSet<>();
+        List<Role> customerRoleList = new ArrayList<>();
         Role newCustomerRole = Role.builder()
                 .name(ERole.CUSTOMER)
                 .build();
 
         roleRepository.saveAllAndFlush(List.of(newMerchantRole, newCustomerRole));
-        merchantRoleSet.add(newMerchantRole);
-        customerRoleSet.add(newCustomerRole);
+        merchantRoleList.add(newMerchantRole);
+        customerRoleList.add(newCustomerRole);
 
 
         /*
@@ -76,7 +76,7 @@ public class Setup {
                     .name(String.format("Merchant %d", i))
                     .email(String.format("merchant%d@example.com", i))
                     .password(passwordEncoder.encode("password"))
-                    .roles(merchantRoleSet)
+                    .roles(merchantRoleList)
                     .build();
             usersMerchants.add(newUser);
         }
@@ -86,7 +86,7 @@ public class Setup {
                     .name(String.format("Customer %d", i))
                     .email(String.format("customer%d@example.com", i))
                     .password(passwordEncoder.encode("password"))
-                    .roles(customerRoleSet)
+                    .roles(customerRoleList)
                     .build();
             usersCustomers.add(newUser);
         }
