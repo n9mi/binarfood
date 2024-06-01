@@ -1,8 +1,6 @@
 package com.synergy.binarfood.controller.merchant;
 
-import com.synergy.binarfood.model.merchant.MerchantRequest;
-import com.synergy.binarfood.model.merchant.GetAllMerchantRequest;
-import com.synergy.binarfood.model.merchant.MerchantResponse;
+import com.synergy.binarfood.model.merchant.*;
 import com.synergy.binarfood.model.web.WebResponse;
 import com.synergy.binarfood.service.MerchantService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/merchant/merchants")
@@ -59,6 +58,63 @@ public class MerchantController {
         MerchantResponse merchant = this.merchantService.create(request);
         WebResponse<MerchantResponse> response = WebResponse.<MerchantResponse>builder()
                 .data(merchant)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(
+            path = "/{merchantId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<WebResponse<MerchantResponse>> update(
+            Authentication authentication,
+            @PathVariable UUID merchantId,
+            @RequestBody MerchantRequest request) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        request.setEmail(userDetails.getUsername());
+
+        MerchantResponse merchant = this.merchantService.update(merchantId, request);
+        WebResponse<MerchantResponse> response = WebResponse.<MerchantResponse>builder()
+                .data(merchant)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping(
+            path = "/{merchantId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<WebResponse<MerchantResponse>> updateOpen(
+            Authentication authentication,
+            @PathVariable UUID merchantId,
+            @RequestBody OpenMerchantRequest request) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        request.setEmail(userDetails.getUsername());
+
+        MerchantResponse merchant = this.merchantService.updateOpen(merchantId, request);
+        WebResponse<MerchantResponse> response = WebResponse.<MerchantResponse>builder()
+                .data(merchant)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping(
+            path = "/{merchantId}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<WebResponse<String>> delete(
+            Authentication authentication,
+            @PathVariable UUID merchantId) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        DeleteMerchantRequest request = DeleteMerchantRequest.builder()
+                .email(userDetails.getUsername())
+                .build();
+
+        this.merchantService.delete(merchantId, request);
+        WebResponse<String> response = WebResponse.<String>builder()
+                .data(null)
                 .build();
 
         return ResponseEntity.ok(response);

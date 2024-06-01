@@ -2,11 +2,10 @@ package com.synergy.binarfood.service;
 
 import com.synergy.binarfood.entity.Merchant;
 import com.synergy.binarfood.entity.User;
-import com.synergy.binarfood.model.merchant.MerchantRequest;
-import com.synergy.binarfood.model.merchant.GetAllMerchantRequest;
-import com.synergy.binarfood.model.merchant.MerchantResponse;
+import com.synergy.binarfood.model.merchant.*;
 import com.synergy.binarfood.repository.MerchantRepository;
 import com.synergy.binarfood.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -25,6 +25,7 @@ public class MerchantServiceImpl implements MerchantService {
     private final UserRepository userRepository;
     private final ValidationService validationService;
 
+    @Transactional
     public Page<MerchantResponse> findAll(GetAllMerchantRequest request) {
         Pageable pageable = PageRequest.of(request.getPage(), request.getPageSize());
         Page<Merchant> merchants;
@@ -50,6 +51,7 @@ public class MerchantServiceImpl implements MerchantService {
         });
     }
 
+    @Transactional
     public MerchantResponse create(MerchantRequest request) {
         this.validationService.validate(request);
 
@@ -70,5 +72,74 @@ public class MerchantServiceImpl implements MerchantService {
                 .location(merchant.getLocation())
                 .open(merchant.isOpen())
                 .build();
+    }
+
+    @Transactional
+    public MerchantResponse update(UUID merchantId, MerchantRequest request) {
+        this.validationService.validate(request);
+
+        User user = this.userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user doesn't exists"));
+        Merchant merchant = this.merchantRepository
+                .findById(merchantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists"));
+        if (!user.getId().equals(merchant.getUser().getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists");
+        }
+
+        merchant.setName(request.getName());
+        merchant.setLocation(request.getLocation());
+        merchant.setOpen(request.isOpen());
+        this.merchantRepository.save(merchant);
+
+        return MerchantResponse.builder()
+                .id(merchant.getId().toString())
+                .name(merchant.getName())
+                .location(merchant.getLocation())
+                .open(merchant.isOpen())
+                .build();
+    }
+
+    @Transactional
+    public MerchantResponse updateOpen(UUID merchantId, OpenMerchantRequest request) {
+        this.validationService.validate(request);
+
+        User user = this.userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user doesn't exists"));
+        Merchant merchant = this.merchantRepository
+                .findById(merchantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists"));
+        if (!user.getId().equals(merchant.getUser().getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists");
+        }
+
+        merchant.setOpen(request.isOpen());
+        this.merchantRepository.save(merchant);
+
+        return MerchantResponse.builder()
+                .id(merchant.getId().toString())
+                .name(merchant.getName())
+                .location(merchant.getLocation())
+                .open(merchant.isOpen())
+                .build();
+    }
+
+    @Transactional
+    public void delete(UUID merchantId, DeleteMerchantRequest request) {
+        this.validationService.validate(request);
+
+        User user = this.userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user doesn't exists"));
+        Merchant merchant = this.merchantRepository
+                .findById(merchantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists"));
+        if (!user.getId().equals(merchant.getUser().getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists");
+        }
+
+        this.merchantRepository.delete(merchant);
     }
 }

@@ -1,5 +1,6 @@
 package com.synergy.binarfood.model.merchant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ public class MerchantRequest {
     @NotBlank
     String location;
 
+    @JsonIgnore
     @NotBlank
     String email;
 

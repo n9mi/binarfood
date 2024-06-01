@@ -1,4 +1,4 @@
-package com.synergy.binarfood.model.auth;
+package com.synergy.binarfood.model.merchant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
@@ -9,13 +9,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class ValidateOtpRequest {
+@AllArgsConstructor
+public class DeleteMerchantRequest {
     @JsonIgnore
     @NotBlank
-    private String email;
-
-    @NotBlank
-    private String otpCode;
+    String email;
 }

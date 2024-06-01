@@ -16,7 +16,7 @@ import java.util.UUID;
 @Table(name = "order_details")
 @SQLDelete(sql = "update order_details set deleted_date = now() where id = ?")
 @SQLRestriction("deleted_date is null")
-public class OrderDetail {
+public class OrderDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
