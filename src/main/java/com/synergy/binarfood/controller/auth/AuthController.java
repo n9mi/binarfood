@@ -1,5 +1,6 @@
 package com.synergy.binarfood.controller.auth;
 
+import com.synergy.binarfood.model.auth.ForgetPasswordRequest;
 import com.synergy.binarfood.model.auth.LoginRequest;
 import com.synergy.binarfood.model.auth.RegisterRequest;
 import com.synergy.binarfood.model.auth.TokenResponse;
@@ -31,6 +32,17 @@ public class AuthController {
         TokenResponse tokenResponse = this.authService.login(request);
         WebResponse<TokenResponse> response = WebResponse.<TokenResponse>builder()
                 .data(tokenResponse)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/forget-password")
+    public ResponseEntity<WebResponse<String>> forgetPassword(
+            @RequestBody ForgetPasswordRequest request) {
+        this.authService.forgetPassword(request);
+        WebResponse<String> response = WebResponse.<String>builder()
+                .data(null)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);

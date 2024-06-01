@@ -46,11 +46,11 @@ public class VerificationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/otp/change-password")
-    public ResponseEntity<WebResponse<String>> requestChangePasswordOtp(Authentication authentication) {
+    @PostMapping("/otp/forget-password")
+    public ResponseEntity<WebResponse<String>> requestForgetPasswordOtp(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        this.authService.requestUserChangePasswordOtp(userDetails.getUsername());
+        this.authService.requestUserForgetPasswordOtp(userDetails.getUsername());
         WebResponse<String> response = WebResponse.<String>builder()
                 .data("")
                 .build();
@@ -58,14 +58,14 @@ public class VerificationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/otp/change-password/verify")
-    public ResponseEntity<WebResponse<String>> verifyChangePasswordOtp(
+    @PostMapping("/otp/forget-password/verify")
+    public ResponseEntity<WebResponse<String>> verifyForgetPasswordOtp(
             Authentication authentication,
             @RequestBody ValidateOtpRequest request) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         request.setEmail(userDetails.getUsername());
 
-        this.authService.validateUserChangePasswordOtp(request);
+        this.authService.validateForgetPasswordOtp(request);
         WebResponse<String> response = WebResponse.<String>builder()
                 .data("")
                 .build();

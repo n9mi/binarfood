@@ -73,6 +73,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(SWAGGER_URL_PATHS).permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/public/**").permitAll()
                                 .requestMatchers("/api/v1/merchant/**").hasRole(
                                         ERole.MERCHANT.name())
                                 .requestMatchers("/api/v1/customer/**").hasRole(

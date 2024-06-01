@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -131,7 +130,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
-    public void requestUserChangePasswordOtp(String userEmail) {
+    public void requestUserForgetPasswordOtp(String userEmail) {
         User user = this.userRepository
                 .findByEmail(userEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "user not found"));
@@ -163,7 +162,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
-    public void validateUserChangePasswordOtp(ValidateOtpRequest request) {
+    public void validateForgetPasswordOtp(ValidateOtpRequest request) {
         this.validationService.validate(request);
 
         User user = this.userRepository
@@ -181,5 +180,17 @@ public class AuthServiceImpl implements AuthService {
         }
         userChangePassword.setMarkedAsValid(false);
         this.userChangePasswordRepository.save(userChangePassword);
+    }
+
+    @Transactional
+    public void forgetPassword(ForgetPasswordRequest request) {
+        this.validationService.validate(request);
+
+        User user = this.userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "user not found"));
+
+        user.setPassword(this.passwordEncoder.encode(request.getNewPassword()));
+        this.userRepository.save(user);
     }
 }

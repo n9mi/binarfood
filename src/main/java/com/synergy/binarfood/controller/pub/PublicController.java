@@ -1,4 +1,4 @@
-package com.synergy.binarfood.controller.user;
+package com.synergy.binarfood.controller.pub;
 
 import com.synergy.binarfood.model.merchant.GetAllMerchantRequest;
 import com.synergy.binarfood.model.merchant.MerchantResponse;
@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/user/merchants")
+@RequestMapping("/api/v1/public")
 @RequiredArgsConstructor
-public class UserMerchantController {
+public class PublicController {
     private final MerchantService merchantService;
 
-    @GetMapping("")
+    @GetMapping("/merchants")
     public ResponseEntity<WebResponse<List<MerchantResponse>>> getAll(
-            Authentication authentication,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "onlyOpen", required = false, defaultValue = "true") boolean onlyOpen) {
