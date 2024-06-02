@@ -15,6 +15,8 @@ import java.util.UUID;
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     Page<Product> findAllByMerchant(Merchant merchant, Pageable pageable);
 
+    boolean existsByIdAndMerchant_id(UUID id, UUID merchantId);
+
     @Modifying
     @Query(value = "delete from products", nativeQuery = true)
     void hardDeleteAll();

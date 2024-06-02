@@ -2,7 +2,9 @@ package com.synergy.binarfood.service;
 
 import com.synergy.binarfood.entity.Merchant;
 import com.synergy.binarfood.entity.Product;
+import com.synergy.binarfood.model.product.DeleteProductRequest;
 import com.synergy.binarfood.model.product.GetAllProductByMerchantRequest;
+import com.synergy.binarfood.model.product.ProductRequest;
 import com.synergy.binarfood.model.product.ProductResponse;
 import com.synergy.binarfood.repository.MerchantRepository;
 import com.synergy.binarfood.repository.ProductRepository;
@@ -43,5 +45,67 @@ public class ProductServiceImpl implements ProductService {
                         .build();
             }
         });
+    }
+
+    public ProductResponse create(ProductRequest request) {
+        this.validationService.validate(request);
+
+        Merchant merchant = this.merchantRepository
+                .findById(request.getMerchantId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists"));
+        if (!this.merchantRepository.existsByIdAndUser_Email(merchant.getId(), request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists");
+        }
+
+        Product product = Product.builder()
+                .name(request.getName())
+                .price(request.getPrice())
+                .merchant(merchant)
+                .build();
+        this.productRepository.save(product);
+
+        return ProductResponse.builder()
+                .id(product.getId().toString())
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
+    }
+
+    public ProductResponse update(UUID productId, ProductRequest request) {
+        this.validationService.validate(request);
+
+        Merchant merchant = this.merchantRepository
+                .findById(request.getMerchantId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists found"));
+        if (!this.merchantRepository.existsByIdAndUser_Email(merchant.getId(), request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists");
+        }
+
+        Product product = this.productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "product doesn't exists"));
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        this.productRepository.save(product);
+
+        return ProductResponse.builder()
+                .id(product.getId().toString())
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
+    }
+
+    public void delete(UUID productId, DeleteProductRequest request) {
+        this.validationService.validate(request);
+
+        Merchant merchant = this.merchantRepository
+                .findById(request.getMerchantId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists found"));
+        if (!this.merchantRepository.existsByIdAndUser_Email(merchant.getId(), request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant doesn't exists");
+        }
+
+        Product product = this.productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "product doesn't exists"));
+        this.productRepository.delete(product);
     }
 }
