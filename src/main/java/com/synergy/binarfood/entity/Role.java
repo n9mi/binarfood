@@ -22,7 +22,7 @@ public class Role extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ERole name;
 
-    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),

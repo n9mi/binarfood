@@ -34,7 +34,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private boolean isVerified;
 
-    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
