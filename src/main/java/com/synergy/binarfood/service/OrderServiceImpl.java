@@ -3,10 +3,7 @@ package com.synergy.binarfood.service;
 import com.synergy.binarfood.entity.Order;
 import com.synergy.binarfood.entity.OrderDetail;
 import com.synergy.binarfood.entity.User;
-import com.synergy.binarfood.model.order.GetAllOrderRequest;
-import com.synergy.binarfood.model.order.OrderDetailResponse;
-import com.synergy.binarfood.model.order.OrderRequest;
-import com.synergy.binarfood.model.order.OrderResponse;
+import com.synergy.binarfood.model.order.*;
 import com.synergy.binarfood.repository.OrderDetailRepository;
 import com.synergy.binarfood.repository.OrderRepository;
 import com.synergy.binarfood.repository.UserRepository;
@@ -21,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -104,6 +102,42 @@ public class OrderServiceImpl implements OrderService {
                 .id(order.getId().toString())
                 .destinationAddress(order.getDestinationAddress())
                 .orderAt(order.getOrderAt())
+                .build();
+    }
+
+    @Transactional
+    public OrderResponse checkout(CheckoutOrderRequest request) {
+        Order order = this.orderRepository.findByIdAndUser_Email(request.getOrderId(), request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "order doesn't exists"));
+        if (!Objects.equals(order.getUser().getEmail(), request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "order doesn't exists");
+        }
+        order.setCompletedAt(new Date());
+        this.orderRepository.save(order);
+
+        List<OrderDetail> orderDetails = this.orderDetailRepository.findAllByOrder(order);
+        List<OrderDetailResponse> orderDetailsResponse = orderDetails
+                .stream()
+                .map(e -> OrderDetailResponse.builder()
+                        .orderDetailId(e.getId().toString())
+                        .merchantId(e.getProduct().getMerchant().getId().toString())
+                        .merchantName(e.getProduct().getMerchant().getName())
+                        .productId(e.getProduct().getId().toString())
+                        .productName(e.getProduct().getName())
+                        .quantity(e.getQuantity())
+                        .totalPrice(e.getProduct().getPrice() * e.getQuantity())
+                        .build())
+                .toList();
+        return OrderResponse.builder()
+                .id(order.getId().toString())
+                .destinationAddress(order.getDestinationAddress())
+                .orderAt(order.getOrderAt())
+                .completedAt(order.getCompletedAt())
+                .orderDetails(orderDetailsResponse)
+                .totalPrice(order.getOrderDetails()
+                        .stream()
+                        .map(OrderDetail::getTotalPrice)
+                        .reduce(0.0, Double::sum))
                 .build();
     }
 }

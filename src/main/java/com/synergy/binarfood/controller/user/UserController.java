@@ -1,7 +1,5 @@
 package com.synergy.binarfood.controller.user;
 
-import com.synergy.binarfood.model.merchant.MerchantRequest;
-import com.synergy.binarfood.model.merchant.MerchantResponse;
 import com.synergy.binarfood.model.user.UserUpdateRequest;
 import com.synergy.binarfood.model.web.WebResponse;
 import com.synergy.binarfood.service.UserService;

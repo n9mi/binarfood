@@ -143,4 +143,25 @@ public class OrderController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping(
+            path = "/{orderId}/checkout",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<OrderResponse>> checkout(
+            Authentication authentication,
+            @PathVariable UUID orderId) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CheckoutOrderRequest request = CheckoutOrderRequest.builder()
+                .orderId(orderId)
+                .email(userDetails.getUsername())
+                .build();
+
+        OrderResponse order = this.orderService.checkout(request);
+        WebResponse<OrderResponse> response = WebResponse.<OrderResponse>builder()
+                .data(order)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }

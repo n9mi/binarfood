@@ -1,5 +1,6 @@
 package com.synergy.binarfood.service;
 
+import com.synergy.binarfood.model.order.CheckoutOrderRequest;
 import com.synergy.binarfood.model.order.GetAllOrderRequest;
 import com.synergy.binarfood.model.order.OrderRequest;
 import com.synergy.binarfood.model.order.OrderResponse;
@@ -11,4 +12,5 @@ public interface OrderService {
     public Page<OrderResponse> findAllByUser(GetAllOrderRequest request);
     public OrderResponse findById(UUID orderId, String userEmail);
     public OrderResponse create(OrderRequest request);
+    public OrderResponse checkout(CheckoutOrderRequest request);
 }
