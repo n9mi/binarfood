@@ -20,7 +20,7 @@ public class UserController {
             path = "",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<WebResponse<String>> create(
+    public ResponseEntity<WebResponse<String>> update(
             Authentication authentication,
             @RequestBody UserUpdateRequest request) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -38,7 +38,7 @@ public class UserController {
     @DeleteMapping(
             path = "",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<WebResponse<String>> create(
+    public ResponseEntity<WebResponse<String>> delete(
             Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 

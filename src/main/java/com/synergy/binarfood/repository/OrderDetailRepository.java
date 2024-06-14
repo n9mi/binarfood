@@ -3,7 +3,6 @@ package com.synergy.binarfood.repository;
 import com.synergy.binarfood.entity.Order;
 import com.synergy.binarfood.entity.OrderDetail;
 import com.synergy.binarfood.entity.Product;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
